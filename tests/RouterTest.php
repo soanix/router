@@ -6,6 +6,9 @@ namespace {
     {
         public function notfound()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             echo 'route not found';
         }
     }
@@ -14,6 +17,9 @@ namespace {
     {
         protected function setUp()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Clear SCRIPT_NAME because bramus/router tries to guess the subfolder the script is run in
             $_SERVER['SCRIPT_NAME'] = '/index.php';
 
@@ -26,19 +32,27 @@ namespace {
 
         protected function tearDown()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // nothing
         }
 
         public function testInit()
         {
-            $this->assertInstanceOf('\Bramus\Router\Router', new \Bramus\Router\Router());
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
+            // $this->assertInstanceOf('\Soanix\Router\Router', new Router());
         }
 
         public function testUri()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->match('GET', '/about', function () {
+            \Soanix\Router\Router::match('GET', '/about', function () {
                 echo 'about';
             });
 
@@ -46,24 +60,22 @@ namespace {
             $_SERVER['SCRIPT_NAME'] = '/sub/folder/index.php';
             $_SERVER['REQUEST_URI'] = '/sub/folder/about/whatever';
 
-            $method = new ReflectionMethod(
-                '\Bramus\Router\Router',
-                'getCurrentUri'
-            );
-
-            $method->setAccessible(true);
 
             $this->assertEquals(
                 '/about/whatever',
-                $method->invoke(new \Bramus\Router\Router())
+                \Soanix\Router\Router::getCurrentUri()
+
             );
         }
 
         public function testBasePathOverride()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->match('GET', '/about', function () {
+
+            \Soanix\Router\Router::match('GET', '/about', function () {
                 echo 'about';
             });
 
@@ -71,17 +83,17 @@ namespace {
             $_SERVER['SCRIPT_NAME'] = '/public/index.php';
             $_SERVER['REQUEST_URI'] = '/about';
 
-            $router->setBasePath('/');
+            \Soanix\Router\Router::setBasePath('/');
 
             $this->assertEquals(
                 '/',
-                $router->getBasePath()
+                \Soanix\Router\Router::getBasePath()
             );
 
             // Test the /about route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/about';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('about', ob_get_contents());
 
             // Cleanup
@@ -90,9 +102,12 @@ namespace {
 
         public function testBasePathThatContainsEmoji()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->match('GET', '/about', function () {
+
+            \Soanix\Router\Router::match('GET', '/about', function () {
                 echo 'about';
             });
 
@@ -102,7 +117,7 @@ namespace {
 
             // Test the /hello/bramus route
             ob_start();
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('about', ob_get_contents());
 
             // Cleanup
@@ -111,16 +126,19 @@ namespace {
 
         public function testStaticRoute()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->match('GET', '/about', function () {
+
+            \Soanix\Router\Router::match('GET', '/about', function () {
                 echo 'about';
             });
 
             // Test the /about route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/about';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('about', ob_get_contents());
 
             // Cleanup
@@ -129,16 +147,19 @@ namespace {
 
         public function testStaticRouteUsingShorthand()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/about', function () {
+
+            \Soanix\Router\Router::get('/about', function () {
                 echo 'about';
             });
 
             // Test the /about route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/about';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('about', ob_get_contents());
 
             // Cleanup
@@ -147,67 +168,70 @@ namespace {
 
         public function testRequestMethods()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'get';
             });
-            $router->post('/', function () {
+            \Soanix\Router\Router::post('/', function () {
                 echo 'post';
             });
-            $router->put('/', function () {
+            \Soanix\Router\Router::put('/', function () {
                 echo 'put';
             });
-            $router->patch('/', function () {
+            \Soanix\Router\Router::patch('/', function () {
                 echo 'patch';
             });
-            $router->delete('/', function () {
+            \Soanix\Router\Router::delete('/', function () {
                 echo 'delete';
             });
-            $router->options('/', function () {
+            \Soanix\Router\Router::options('/', function () {
                 echo 'options';
             });
 
             // Test GET
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('get', ob_get_contents());
 
             // Test POST
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'POST';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('post', ob_get_contents());
 
             // Test PUT
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'PUT';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('put', ob_get_contents());
 
             // Test PATCH
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'PATCH';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('patch', ob_get_contents());
 
             // Test DELETE
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'DELETE';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('delete', ob_get_contents());
 
             // Test OPTIONS
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'OPTIONS';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('options', ob_get_contents());
 
             // Test HEAD
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'HEAD';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('', ob_get_contents());
 
             // Cleanup
@@ -216,9 +240,12 @@ namespace {
 
         public function testShorthandAll()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->all('/', function () {
+
+            \Soanix\Router\Router::all('/', function () {
                 echo 'all';
             });
 
@@ -227,43 +254,43 @@ namespace {
             // Test GET
             ob_start();
             $_SERVER['REQUEST_METHOD'] = 'GET';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test POST
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'POST';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test PUT
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'PUT';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test DELETE
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'DELETE';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test OPTIONS
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'OPTIONS';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test PATCH
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'PATCH';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('all', ob_get_contents());
 
             // Test HEAD
             ob_clean();
             $_SERVER['REQUEST_METHOD'] = 'HEAD';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('', ob_get_contents());
 
             // Cleanup
@@ -272,16 +299,19 @@ namespace {
 
         public function testDynamicRoute()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/(\w+)', function ($name) {
+
+            \Soanix\Router\Router::get('/hello/(\w+)', function ($name) {
                 echo 'Hello ' . $name;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus', ob_get_contents());
 
             // Cleanup
@@ -290,16 +320,19 @@ namespace {
 
         public function testDynamicRouteWithMultiple()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/(\w+)/(\w+)', function ($name, $lastname) {
+
+            \Soanix\Router\Router::get('/hello/(\w+)/(\w+)', function ($name, $lastname) {
                 echo 'Hello ' . $name . ' ' . $lastname;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus sumarb', ob_get_contents());
 
             // Cleanup
@@ -308,16 +341,19 @@ namespace {
 
         public function testCurlyBracesRoutes()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/{name}/{lastname}', function ($name, $lastname) {
+
+            \Soanix\Router\Router::get('/hello/{name}/{lastname}', function ($name, $lastname) {
                 echo 'Hello ' . $name . ' ' . $lastname;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus sumarb', ob_get_contents());
 
             // Cleanup
@@ -326,16 +362,19 @@ namespace {
 
         public function testCurlyBracesRoutesWithNonAZCharsInPlaceholderNames()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/{arg1}/{arg2}', function ($arg1, $arg2) {
+
+            \Soanix\Router\Router::get('/hello/{arg1}/{arg2}', function ($arg1, $arg2) {
                 echo 'Hello ' . $arg1 . ' ' . $arg2;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus sumarb', ob_get_contents());
 
             // Cleanup
@@ -344,16 +383,19 @@ namespace {
 
         public function testCurlyBracesRoutesWithCyrillicCharactersInPlaceholderNames()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/{това}/{това}', function ($arg1, $arg2) {
+
+            \Soanix\Router\Router::get('/hello/{това}/{това}', function ($arg1, $arg2) {
                 echo 'Hello ' . $arg1 . ' ' . $arg2;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus sumarb', ob_get_contents());
 
             // Cleanup
@@ -362,16 +404,19 @@ namespace {
 
         public function testCurlyBracesRoutesWithEmojiInPlaceholderNames()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/{😂}/{😅}', function ($arg1, $arg2) {
+
+            \Soanix\Router\Router::get('/hello/{😂}/{😅}', function ($arg1, $arg2) {
                 echo 'Hello ' . $arg1 . ' ' . $arg2;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus sumarb', ob_get_contents());
 
             // Cleanup
@@ -380,16 +425,19 @@ namespace {
 
         public function testCurlyBracesWithCyrillicCharacters()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/bg/{arg}', function ($arg) {
+
+            \Soanix\Router\Router::get('/bg/{arg}', function ($arg) {
                 echo 'BG: ' . $arg;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/bg/това';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('BG: това', ob_get_contents());
 
             // Cleanup
@@ -398,16 +446,19 @@ namespace {
 
         public function testCurlyBracesWithMultipleCyrillicCharacters()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/bg/{arg}/{arg}', function ($arg1, $arg2) {
+
+            \Soanix\Router\Router::get('/bg/{arg}/{arg}', function ($arg1, $arg2) {
                 echo 'BG: ' . $arg1 . ' - ' . $arg2;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/bg/това/слъг';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('BG: това - слъг', ob_get_contents());
 
             // Cleanup
@@ -416,16 +467,19 @@ namespace {
 
         public function testCurlyBracesWithEmoji()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/emoji/{emoji}', function ($emoji) {
+
+            \Soanix\Router\Router::get('/emoji/{emoji}', function ($emoji) {
                 echo 'Emoji: ' . $emoji;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/emoji/%F0%9F%92%A9'; // 💩
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Emoji: 💩', ob_get_contents());
 
             // Cleanup
@@ -434,9 +488,12 @@ namespace {
 
         public function testCurlyBracesWithEmojiCombinedWithBasePathThatContainsEmoji()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/emoji/{emoji}', function ($emoji) {
+
+            \Soanix\Router\Router::get('/emoji/{emoji}', function ($emoji) {
                 echo 'Emoji: ' . $emoji;
             });
 
@@ -446,7 +503,7 @@ namespace {
 
             // Test the /hello/bramus route
             ob_start();
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Emoji: 🤯', ob_get_contents());
 
             // Cleanup
@@ -455,22 +512,25 @@ namespace {
 
         public function testDynamicRouteWithOptionalSubpatterns()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello(/\w+)?', function ($name = null) {
+
+            \Soanix\Router\Router::get('/hello(/\w+)?', function ($name = null) {
                 echo 'Hello ' . (($name) ? $name : 'stranger');
             });
 
             // Test the /hello route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello stranger', ob_get_contents());
 
             // Test the /hello/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/hello/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus', ob_get_contents());
 
             // Cleanup
@@ -479,16 +539,19 @@ namespace {
 
         public function testDynamicRouteWithMultipleSubpatterns()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/(.*)/page([0-9]+)', function ($place, $page) {
+
+            \Soanix\Router\Router::get('/(.*)/page([0-9]+)', function ($place, $page) {
                 echo 'Hello ' . $place . ' page : ' . $page;
             });
 
             // Test the /hello/bramus/page3 route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/page3';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello hello/bramus page : 3', ob_get_contents());
 
             // Cleanup
@@ -497,9 +560,12 @@ namespace {
 
         public function testDynamicRouteWithOptionalNestedSubpatterns()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/blog(/\d{4}(/\d{2}(/\d{2}(/[a-z0-9_-]+)?)?)?)?', function ($year = null, $month = null, $day = null, $slug = null) {
+
+            \Soanix\Router\Router::get('/blog(/\d{4}(/\d{2}(/\d{2}(/[a-z0-9_-]+)?)?)?)?', function ($year = null, $month = null, $day = null, $slug = null) {
                 if ($year === null) {
                     echo 'Blog overview';
 
@@ -526,31 +592,31 @@ namespace {
             // Test the /blog route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/blog';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Blog overview', ob_get_contents());
 
             // Test the /blog/year route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/blog/1983';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Blog year overview (1983)', ob_get_contents());
 
             // Test the /blog/year/month route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/blog/1983/12';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Blog month overview (1983-12)', ob_get_contents());
 
             // Test the /blog/year/month/day route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/blog/1983/12/26';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Blog day overview (1983-12-26)', ob_get_contents());
 
             // Test the /blog/year/month/day/slug route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/blog/1983/12/26/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Blogpost bramus detail (1983-12-26)', ob_get_contents());
 
             // Cleanup
@@ -559,22 +625,25 @@ namespace {
 
         public function testDynamicRouteWithNestedOptionalSubpatterns()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello(/\w+(/\w+)?)?', function ($name1 = null, $name2 = null) {
+
+            \Soanix\Router\Router::get('/hello(/\w+(/\w+)?)?', function ($name1 = null, $name2 = null) {
                 echo 'Hello ' . (($name1) ? $name1 : 'stranger') . ' ' . (($name2) ? $name2 : 'stranger');
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus stranger', ob_get_contents());
 
             // Test the /hello/bramus/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus bramus', ob_get_contents());
 
             // Cleanup
@@ -583,16 +652,19 @@ namespace {
 
         public function testDynamicRouteWithWildcard()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('(.*)', function ($name) {
+
+            \Soanix\Router\Router::get('(.*)', function ($name) {
                 echo 'Hello ' . $name;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello hello/bramus', ob_get_contents());
 
             // Cleanup
@@ -601,16 +673,19 @@ namespace {
 
         public function testDynamicRouteWithPartialWildcard()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/hello/(.*)', function ($name) {
+
+            \Soanix\Router\Router::get('/hello/(.*)', function ($name) {
                 echo 'Hello ' . $name;
             });
 
             // Test the /hello/bramus route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/hello/bramus/sumarb';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('Hello bramus/sumarb', ob_get_contents());
 
             // Cleanup
@@ -619,35 +694,38 @@ namespace {
 
         public function test404()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'home';
             });
-            $router->set404(function () {
+            \Soanix\Router\Router::set404(function () {
                 echo 'route not found';
             });
 
-            $router->set404('/api(/.*)?', function () {
+            \Soanix\Router\Router::set404('/api(/.*)?', function () {
                 echo 'api route not found';
             });
 
             // Test the /hello route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('home', ob_get_contents());
 
             // Test the /hello/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/foo';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('route not found', ob_get_contents());
 
             // Test the custom api 404
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/api/getUser';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('api route not found', ob_get_contents());
 
             // Cleanup
@@ -656,24 +734,27 @@ namespace {
 
         public function test404WithClassAtMethod()
         {
-            // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
+            // Create Route
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'home';
             });
 
-            $router->set404('Handler@notFound');
+            \Soanix\Router\Router::set404('Handler@notFound');
 
             // Test the /hello route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('home', ob_get_contents());
 
             // Test the /hello/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/foo';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('route not found', ob_get_contents());
 
             // Cleanup
@@ -682,24 +763,27 @@ namespace {
 
         public function test404WithClassAtStaticMethod()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'home';
             });
 
-            $router->set404('Handler@notFound');
+            \Soanix\Router\Router::set404('Handler@notFound');
 
             // Test the /hello route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('home', ob_get_contents());
 
             // Test the /hello/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/foo';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('route not found', ob_get_contents());
 
             // Cleanup
@@ -708,19 +792,22 @@ namespace {
 
         public function test404WithManualTrigger()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function() use ($router) {
-                $router->trigger404();
+
+            \Soanix\Router\Router::get('/', function () {
+                \Soanix\Router\Router::trigger404();
             });
-            $router->set404(function () {
+            \Soanix\Router\Router::set404(function () {
                 echo 'route not found';
             });
 
             // Test the / route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('route not found', ob_get_contents());
 
             // Cleanup
@@ -729,48 +816,51 @@ namespace {
 
         public function testBeforeRouterMiddleware()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->before('GET|POST', '/.*', function () {
-                echo 'before ';
+
+            \Soanix\Router\Router::middleware('GET|POST', '/.*', function () {
+                echo 'middleware ';
             });
-            $router->get('/', function () {
+            \Soanix\Router\Router::get('/', function () {
                 echo 'root';
             });
-            $router->get('/about', function () {
+            \Soanix\Router\Router::get('/about', function () {
                 echo 'about';
             });
-            $router->get('/contact', function () {
+            \Soanix\Router\Router::get('/contact', function () {
                 echo 'contact';
             });
-            $router->post('/post', function () {
+            \Soanix\Router\Router::post('/post', function () {
                 echo 'post';
             });
 
             // Test the / route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run();
-            $this->assertEquals('before root', ob_get_contents());
+            \Soanix\Router\Router::run();
+            $this->assertEquals('middleware root', ob_get_contents());
 
             // Test the /about route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/about';
-            $router->run();
-            $this->assertEquals('before about', ob_get_contents());
+            \Soanix\Router\Router::run();
+            $this->assertEquals('middleware about', ob_get_contents());
 
             // Test the /contact route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/contact';
-            $router->run();
-            $this->assertEquals('before contact', ob_get_contents());
+            \Soanix\Router\Router::run();
+            $this->assertEquals('middleware contact', ob_get_contents());
 
             // Test the /post route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/post';
             $_SERVER['REQUEST_METHOD'] = 'POST';
-            $router->run();
-            $this->assertEquals('before post', ob_get_contents());
+            \Soanix\Router\Router::run();
+            $this->assertEquals('middleware post', ob_get_contents());
 
             // Cleanup
             ob_end_clean();
@@ -778,16 +868,19 @@ namespace {
 
         public function testAfterRouterMiddleware()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'home';
             });
 
             // Test the / route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/';
-            $router->run(function () {
+            \Soanix\Router\Router::run(function () {
                 echo 'finished';
             });
             $this->assertEquals('homefinished', ob_get_contents());
@@ -798,13 +891,16 @@ namespace {
 
         public function testBasicController()
         {
-            $router = new \Bramus\Router\Router();
+            // Clear all routes
+            \Soanix\Router\Router::clear();
 
-            $router->get('/show/(.*)', 'RouterTestController@show');
+            \Soanix\Router\Router::setNamespace('\hello');
+
+            \Soanix\Router\Router::get('/show/(.*)', 'RouterTestController@show');
 
             ob_start();
             $_SERVER['REQUEST_URI'] = '/show/foo';
-            $router->run();
+            \Soanix\Router\Router::run();
 
             $this->assertEquals('foo', ob_get_contents());
 
@@ -814,15 +910,17 @@ namespace {
 
         public function testDefaultNamespace()
         {
-            $router = new \Bramus\Router\Router();
+            // Clear all routes
+            \Soanix\Router\Router::clear();
 
-            $router->setNamespace('\Hello');
 
-            $router->get('/show/(.*)', 'HelloRouterTestController@show');
+            \Soanix\Router\Router::setNamespace('\Hello');
+
+            \Soanix\Router\Router::get('/show/(.*)', 'HelloRouterTestController@show');
 
             ob_start();
             $_SERVER['REQUEST_URI'] = '/show/foo';
-            $router->run();
+            \Soanix\Router\Router::run();
 
             $this->assertEquals('foo', ob_get_contents());
 
@@ -832,9 +930,12 @@ namespace {
 
         public function testSubfolders()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/', function () {
+
+            \Soanix\Router\Router::get('/', function () {
                 echo 'home';
             });
 
@@ -842,7 +943,7 @@ namespace {
             ob_start();
             $_SERVER['SCRIPT_NAME'] = '/about/index.php';
             $_SERVER['REQUEST_URI'] = '/about/';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('home', ob_get_contents());
 
             // Cleanup
@@ -851,13 +952,16 @@ namespace {
 
         public function testSubrouteMouting()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->mount('/movies', function () use ($router) {
-                $router->get('/', function () {
+
+            \Soanix\Router\Router::mount('/movies', function () {
+                \Soanix\Router\Router::get('/', function () {
                     echo 'overview';
                 });
-                $router->get('/(\d+)', function ($id) {
+                \Soanix\Router\Router::get('/(\d+)', function ($id) {
                     echo htmlentities($id);
                 });
             });
@@ -865,13 +969,13 @@ namespace {
             // Test the /movies route
             ob_start();
             $_SERVER['REQUEST_URI'] = '/movies';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('overview', ob_get_contents());
 
             // Test the /hello/bramus route
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/movies/1';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('1', ob_get_contents());
 
             // Cleanup
@@ -880,12 +984,15 @@ namespace {
 
         public function testHttpMethodOverride()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Fake the request method to being POST and override it
             $_SERVER['REQUEST_METHOD'] = 'POST';
             $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
             $method = new ReflectionMethod(
-                '\Bramus\Router\Router',
+                '\Soanix\Router\Router',
                 'getRequestMethod'
             );
 
@@ -893,27 +1000,31 @@ namespace {
 
             $this->assertEquals(
                 'PUT',
-                $method->invoke(new \Bramus\Router\Router())
+                \Soanix\Router\Router::getRequestMethod()
             );
         }
 
         public function testControllerMethodReturningFalse()
         {
+            // Clear all routes
+            \Soanix\Router\Router::clear();
+
             // Create Router
-            $router = new \Bramus\Router\Router();
-            $router->get('/false', 'RouterTestController@returnFalse');
-            $router->get('/static-false', 'RouterTestController@staticReturnFalse');
+            \Soanix\Router\Router::setNamespace('\Hello');
+
+            \Soanix\Router\Router::get('/false', 'RouterTestController@returnFalse');
+            \Soanix\Router\Router::get('/static-false', 'RouterTestController@staticReturnFalse');
 
             // Test returnFalse
             ob_start();
             $_SERVER['REQUEST_URI'] = '/false';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('returnFalse', ob_get_contents());
 
             // Test staticReturnFalse
             ob_clean();
             $_SERVER['REQUEST_URI'] = '/static-false';
-            $router->run();
+            \Soanix\Router\Router::run();
             $this->assertEquals('staticReturnFalse', ob_get_contents());
 
             // Cleanup
@@ -922,7 +1033,7 @@ namespace {
     }
 }
 
-namespace {
+namespace Hello {
     class RouterTestController
     {
         public function show($id)
@@ -932,6 +1043,7 @@ namespace {
 
         public function returnFalse()
         {
+
             echo 'returnFalse';
 
             return false;
