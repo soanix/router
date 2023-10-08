@@ -492,7 +492,7 @@ class Router
                     }
                 }
             } catch (\ReflectionException $reflectionException) {
-                throw new RouterException($reflectionException->getMessage());
+                throw new RouterException($reflectionException->getMessage(), 404);
                 // The controller class is not available or the class does not have the method $method
             }
         }
