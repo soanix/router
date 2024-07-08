@@ -75,7 +75,7 @@ class Router
         foreach (explode('|', $methods) as $method) {
             self::$beforeRoutes[$method][] = array(
                 'pattern' => $pattern,
-                'fn' => $fn,
+                'fn' => $fn
             );
         }
     }
@@ -87,7 +87,7 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function match($methods, $pattern, $fn)
+    public static function match($methods, $pattern, $fn, $middleware = null)
     {
         $pattern = self::$baseRoute . '/' . trim($pattern, '/');
         $pattern = self::$baseRoute ? rtrim($pattern, '/') : $pattern;
@@ -96,6 +96,7 @@ class Router
             self::$afterRoutes[$method][] = array(
                 'pattern' => $pattern,
                 'fn' => $fn,
+                'middleware' => $middleware
             );
         }
     }
@@ -106,9 +107,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function all($pattern, $fn)
+    public static function all($pattern, $fn, $middleware = null)
     {
-        self::match('GET|POST|PUT|DELETE|OPTIONS|PATCH|HEAD', $pattern, $fn);
+        self::match('GET|POST|PUT|DELETE|OPTIONS|PATCH|HEAD', $pattern, $fn, $middleware);
     }
 
     /**
@@ -117,9 +118,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function get($pattern, $fn)
+    public static function get($pattern, $fn, $middleware = null)
     {
-        self::match('GET', $pattern, $fn);
+        self::match('GET', $pattern, $fn, $middleware);
     }
 
     /**
@@ -128,9 +129,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function post($pattern, $fn)
+    public static function post($pattern, $fn, $middleware = null)
     {
-        self::match('POST', $pattern, $fn);
+        self::match('POST', $pattern, $fn, $middleware);
     }
 
     /**
@@ -139,9 +140,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function patch($pattern, $fn)
+    public static function patch($pattern, $fn, $middleware = null)
     {
-        self::match('PATCH', $pattern, $fn);
+        self::match('PATCH', $pattern, $fn, $middleware);
     }
 
     /**
@@ -150,9 +151,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function delete($pattern, $fn)
+    public static function delete($pattern, $fn, $middleware = null)
     {
-        self::match('DELETE', $pattern, $fn);
+        self::match('DELETE', $pattern, $fn, $middleware);
     }
 
     /**
@@ -161,9 +162,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function put($pattern, $fn)
+    public static function put($pattern, $fn, $middleware = null)
     {
-        self::match('PUT', $pattern, $fn);
+        self::match('PUT', $pattern, $fn, $middleware);
     }
 
     /**
@@ -172,9 +173,9 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param object|callable $fn The handling function to be executed
      */
-    public static function options($pattern, $fn)
+    public static function options($pattern, $fn, $middleware = null)
     {
-        self::match('OPTIONS', $pattern, $fn);
+        self::match('OPTIONS', $pattern, $fn, $middleware);
     }
 
     /**
@@ -446,6 +447,10 @@ class Router
 
                     return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], '/') : null;
                 }, $matches, array_keys($matches));
+
+                if (!empty($route['middleware']))
+                    // Call the handling function with the URL parameters if the desired input is callable
+                    self::invoke($route['middleware'], $params);
 
                 // Call the handling function with the URL parameters if the desired input is callable
                 self::invoke($route['fn'], $params);
