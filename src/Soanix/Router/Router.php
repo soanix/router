@@ -8,6 +8,9 @@
 
 namespace Soanix\Router;
 
+use ReflectionException;
+use ReflectionMethod;
+
 /**
  * Class Router.
  */
@@ -16,39 +19,39 @@ class Router
     /**
      * @var array The route patterns and their handling functions
      */
-    private static $afterRoutes = array();
+    private static array $afterRoutes = array();
 
     /**
      * @var array The before middleware route patterns and their handling functions
      */
-    private static $beforeRoutes = array();
+    private static array $beforeRoutes = array();
 
     /**
      * @var array [object|callable] The function to be executed when no route has been matched
      */
-    protected static $notFoundCallback = array();
+    protected static array $notFoundCallback = array();
 
     /**
      * @var string Current base route, used for (sub)route mounting
      */
-    private static $baseRoute = '';
+    private static string $baseRoute = '';
 
     /**
      * @var string The Request Method that needs to be handled
      */
-    private static $requestedMethod = '';
+    private static string $requestedMethod = '';
 
     /**
-     * @var string The Server Base Path for Router Execution
+     * @var ?string The Server Base Path for Router Execution
      */
-    private static $serverBasePath = null;
+    private static ?string $serverBasePath = null;
 
     /**
      * @var string Default Controllers Namespace
      */
-    private static $namespace = '';
+    private static string $namespace = '';
 
-    public static function clear()
+    public static function clear(): void
     {
         self::$baseRoute = '';
         self::$requestedMethod = '';
@@ -65,9 +68,9 @@ class Router
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function middleware($methods, $pattern, $fn)
+    public static function middleware(string $methods, string $pattern, callable|object $fn): void
     {
         $pattern = self::$baseRoute . '/' . trim($pattern, '/');
         $pattern = self::$baseRoute ? rtrim($pattern, '/') : $pattern;
@@ -85,9 +88,9 @@ class Router
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function match($methods, $pattern, $fn, $middleware = null)
+    public static function match(string $methods, string $pattern, callable|object|string $fn, $middleware = null): void
     {
         $pattern = self::$baseRoute . '/' . trim($pattern, '/');
         $pattern = self::$baseRoute ? rtrim($pattern, '/') : $pattern;
@@ -105,9 +108,9 @@ class Router
      * Shorthand for a route accessed using any method.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function all($pattern, $fn, $middleware = null)
+    public static function all(string $pattern, callable|object $fn, $middleware = null): void
     {
         self::match('GET|POST|PUT|DELETE|OPTIONS|PATCH|HEAD', $pattern, $fn, $middleware);
     }
@@ -116,9 +119,9 @@ class Router
      * Shorthand for a route accessed using GET.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function get($pattern, $fn, $middleware = null)
+    public static function get(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('GET', $pattern, $fn, $middleware);
     }
@@ -127,9 +130,9 @@ class Router
      * Shorthand for a route accessed using POST.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function post($pattern, $fn, $middleware = null)
+    public static function post(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('POST', $pattern, $fn, $middleware);
     }
@@ -138,9 +141,9 @@ class Router
      * Shorthand for a route accessed using PATCH.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function patch($pattern, $fn, $middleware = null)
+    public static function patch(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('PATCH', $pattern, $fn, $middleware);
     }
@@ -149,9 +152,9 @@ class Router
      * Shorthand for a route accessed using DELETE.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function delete($pattern, $fn, $middleware = null)
+    public static function delete(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('DELETE', $pattern, $fn, $middleware);
     }
@@ -160,9 +163,9 @@ class Router
      * Shorthand for a route accessed using PUT.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function put($pattern, $fn, $middleware = null)
+    public static function put(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('PUT', $pattern, $fn, $middleware);
     }
@@ -171,9 +174,9 @@ class Router
      * Shorthand for a route accessed using OPTIONS.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param object|callable $fn The handling function to be executed
+     * @param callable|object $fn The handling function to be executed
      */
-    public static function options($pattern, $fn, $middleware = null)
+    public static function options(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('OPTIONS', $pattern, $fn, $middleware);
     }
@@ -184,13 +187,14 @@ class Router
      * @param string $baseRoute The route sub pattern to mount the callbacks on
      * @param callable $fn The callback method
      */
-    public static function mount($baseRoute, $fn)
+    public static function mount(string $baseRoute, callable $fn): void
     {
         // Track current base route
         $curBaseRoute = self::$baseRoute;
 
         // Build new base route string
         self::$baseRoute .= $baseRoute;
+
 
         // Call the callable
         call_user_func($fn);
@@ -202,9 +206,9 @@ class Router
     /**
      * Get all request headers.
      *
-     * @return array The request headers
+     * @return false|array The request headers
      */
-    public static function getRequestHeaders()
+    public static function getRequestHeaders(): false|array
     {
         $headers = array();
 
@@ -220,7 +224,7 @@ class Router
 
         // Method getallheaders() not available or went wrong: manually extract 'm
         foreach ($_SERVER as $name => $value) {
-            if ((substr($name, 0, 5) == 'HTTP_') || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
+            if ((str_starts_with($name, 'HTTP_')) || ($name == 'CONTENT_TYPE') || ($name == 'CONTENT_LENGTH')) {
                 $headers[str_replace(array(' ', 'Http'), array('-', 'HTTP'), ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
@@ -233,7 +237,7 @@ class Router
      *
      * @return string The Request method to handle
      */
-    public static function getRequestMethod()
+    public static function getRequestMethod(): string
     {
         // Take the method as found in $_SERVER
         $method = $_SERVER['REQUEST_METHOD'];
@@ -259,11 +263,9 @@ class Router
      *
      * @param string $namespace A given namespace
      */
-    public static function setNamespace($namespace)
+    public static function setNamespace(string $namespace): void
     {
-        if (is_string($namespace)) {
-            self::$namespace = $namespace;
-        }
+        self::$namespace = $namespace;
     }
 
     /**
@@ -271,7 +273,7 @@ class Router
      *
      * @return string The given Namespace if exists
      */
-    public static function getNamespace()
+    public static function getNamespace(): string
     {
         return self::$namespace;
     }
@@ -279,11 +281,12 @@ class Router
     /**
      * Execute the router: Loop all defined before middleware's and routes, and execute the handling function if a match was found.
      *
-     * @param object|callable $callback Function to be executed after a matching route was handled (= after router middleware)
+     * @param callable|object|null $callback Function to be executed after a matching route was handled (= after router middleware)
      *
      * @return bool
+     * @throws RouterException
      */
-    public static function run($callback = null)
+    public static function run(callable|object $callback = null): bool
     {
         // Define which method we need to handle
         self::$requestedMethod = self::getRequestMethod();
@@ -321,10 +324,10 @@ class Router
     /**
      * Set the 404 handling function.
      *
-     * @param object|callable|string $match_fn The function to be executed
-     * @param object|callable $fn The function to be executed
+     * @param callable|object|string $match_fn The function to be executed
+     * @param callable|object|null $fn The function to be executed
      */
-    public static function set404($match_fn, $fn = null)
+    public static function set404(callable|object|string $match_fn, callable|object|string $fn = null): void
     {
         if (!is_null($fn)) {
             self::$notFoundCallback[$match_fn] = $fn;
@@ -336,9 +339,9 @@ class Router
     /**
      * Triggers 404 response
      *
-     * @param string $pattern A route pattern such as /about/system
+     * @throws RouterException
      */
-    public static function trigger404($match = null)
+    public static function trigger404($match = []): void
     {
 
         // Counter to keep track of the number of routes we've handled
@@ -353,26 +356,13 @@ class Router
                 $matches = array();
 
                 // check if there is a match and get matches as $matches (pointer)
-                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches, PREG_OFFSET_CAPTURE);
+                $is_match = self::patternMatches($route_pattern, self::getCurrentUri(), $matches);
 
                 // is fallback route match?
                 if ($is_match) {
 
                     // Rework matches to only contain the matches, not the orig string
-                    $matches = array_slice($matches, 1);
-
-                    // Extract the matched URL parameters (and only the parameters)
-                    $params = array_map(function ($match, $index) use ($matches) {
-
-                        // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                        if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
-                            if ($matches[$index + 1][0][1] > -1) {
-                                return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
-                            }
-                        } // We have no following parameters: return the whole lot
-
-                        return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], '/') : null;
-                    }, $matches, array_keys($matches));
+                    list($matches, $params) = self::extractOnlyMatches($matches);
 
                     self::invoke($route_callable);
 
@@ -394,11 +384,10 @@ class Router
      * @param $pattern
      * @param $uri
      * @param $matches
-     * @param $flags
      *
      * @return bool -> is match yes/no
      */
-    private static function patternMatches($pattern, $uri, &$matches, $flags)
+    private static function patternMatches($pattern, $uri, &$matches): bool
     {
         // Replace all curly braces matches {} into word patterns (like Laravel)
         $pattern = preg_replace('/\/{(.*?)}/', '/(.*?)', $pattern);
@@ -408,14 +397,15 @@ class Router
     }
 
     /**
-     * Handle a a set of routes: if a match is found, execute the relating handling function.
+     * Handle a set of routes: if a match is found, execute the relating handling function.
      *
      * @param array $routes Collection of route patterns and their handling functions
      * @param bool $quitAfterRun Does the handle function need to quit after one route was matched?
      *
      * @return int The number of routes handled
+     * @throws RouterException
      */
-    private static function handle($routes, $quitAfterRun = false)
+    private static function handle(array $routes, bool $quitAfterRun = false): int
     {
         // Counter to keep track of the number of routes we've handled
         $numHandled = 0;
@@ -427,30 +417,25 @@ class Router
         foreach ($routes as $route) {
 
             // get routing matches
-            $is_match = self::patternMatches($route['pattern'], $uri, $matches, PREG_OFFSET_CAPTURE);
+            $is_match = self::patternMatches($route['pattern'], $uri, $matches);
 
             // is there a valid match?
             if ($is_match) {
 
                 // Rework matches to only contain the matches, not the orig string
-                $matches = array_slice($matches, 1);
+                list($matches, $params) = self::extractOnlyMatches($matches);
 
-                // Extract the matched URL parameters (and only the parameters)
-                $params = array_map(function ($match, $index) use ($matches) {
-
-                    // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
-                    if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
-                        if ($matches[$index + 1][0][1] > -1) {
-                            return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
-                        }
-                    } // We have no following parameters: return the whole lot
-
-                    return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], '/') : null;
-                }, $matches, array_keys($matches));
+                $middlewares = [];
 
                 if (!empty($route['middleware']))
-                    // Call the handling function with the URL parameters if the desired input is callable
-                    self::invoke($route['middleware'], $params);
+                    if (!is_array($route['middleware']))
+                        $middlewares[] = $route['middleware'];
+                    else
+                        $middlewares = $routes['middleware'];
+
+                foreach ($middlewares as $middleware)
+                    self::invoke($middleware, $params);
+
 
                 // Call the handling function with the URL parameters if the desired input is callable
                 self::invoke($route['fn'], $params);
@@ -468,7 +453,14 @@ class Router
         return $numHandled;
     }
 
-    private static function invoke($fn, $params = array())
+
+    /**
+     * @param $fn
+     * @param array $params
+     * @return void
+     * @throws RouterException
+     */
+    private static function invoke($fn, array $params = array()): void
     {
         if (is_callable($fn)) {
             call_user_func_array($fn, $params);
@@ -483,20 +475,20 @@ class Router
             }
 
             try {
-                $reflectedMethod = new \ReflectionMethod($controller, $method);
+                $reflectedMethod = new ReflectionMethod($controller, $method);
                 // Make sure it's callable
                 if ($reflectedMethod->isPublic() && (!$reflectedMethod->isAbstract())) {
                     if ($reflectedMethod->isStatic()) {
                         forward_static_call_array(array($controller, $method), $params);
                     } else {
                         // Make sure we have an instance, because a non-static method must not be called statically
-                        if (\is_string($controller)) {
+                        if (is_string($controller)) {
                             $controller = new $controller();
                         }
                         call_user_func_array(array($controller, $method), $params);
                     }
                 }
-            } catch (\ReflectionException $reflectionException) {
+            } catch (ReflectionException $reflectionException) {
                 throw new RouterException($reflectionException->getMessage(), 404);
                 // The controller class is not available or the class does not have the method $method
             }
@@ -508,13 +500,13 @@ class Router
      *
      * @return string
      */
-    public static function getCurrentUri()
+    public static function getCurrentUri(): string
     {
         // Get the current Request URI and remove rewrite base path from it (= allows one to run the router in a sub folder)
         $uri = substr(rawurldecode($_SERVER['REQUEST_URI']), strlen(self::getBasePath()));
 
         // Don't take query params into account on the URL
-        if (strstr($uri, '?')) {
+        if (str_contains($uri, '?')) {
             $uri = substr($uri, 0, strpos($uri, '?'));
         }
 
@@ -525,9 +517,9 @@ class Router
     /**
      * Return server base Path, and define it if isn't defined.
      *
-     * @return string
+     * @return string|null
      */
-    public static function getBasePath()
+    public static function getBasePath(): ?string
     {
         // Check if server base path is defined, if not define it.
         if (self::$serverBasePath === null) {
@@ -541,10 +533,34 @@ class Router
      * Explicilty sets the server base path. To be used when your entry script path differs from your entry URLs.
      * @see https://github.com/bramus/router/issues/82#issuecomment-466956078
      *
-     * @param string
+     * @param string $serverBasePath
      */
-    public static function setBasePath($serverBasePath)
+    public static function setBasePath(string $serverBasePath): void
     {
         self::$serverBasePath = $serverBasePath;
+    }
+
+    /**
+     * @param mixed $matches
+     * @return array
+     */
+    private static function extractOnlyMatches(mixed $matches): array
+    {
+        $matches = array_slice($matches, 1);
+
+        // Extract the matched URL parameters (and only the parameters)
+        $params = array_map(function ($match, $index) use ($matches) {
+
+            // We have a following parameter: take the substring from the current param position until the next one's position (thank you PREG_OFFSET_CAPTURE)
+            if (isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
+                if ($matches[$index + 1][0][1] > -1) {
+                    return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
+                }
+            }
+            // We have no following parameters: return the lot
+
+            return isset($match[0][0]) && $match[0][1] != -1 ? trim($match[0][0], '/') : null;
+        }, $matches, array_keys($matches));
+        return array($matches, $params);
     }
 }
