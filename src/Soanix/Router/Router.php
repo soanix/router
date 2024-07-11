@@ -70,7 +70,7 @@ class Router
      * @param string $pattern A route pattern such as /about/system
      * @param callable|object $fn The handling function to be executed
      */
-    public static function middleware(string $methods, string $pattern, callable|object $fn): void
+    public static function middleware(string $methods, string $pattern, callable|object|string $fn): void
     {
         $pattern = self::$baseRoute . '/' . trim($pattern, '/');
         $pattern = self::$baseRoute ? rtrim($pattern, '/') : $pattern;
@@ -88,7 +88,7 @@ class Router
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function match(string $methods, string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -108,9 +108,9 @@ class Router
      * Shorthand for a route accessed using any method.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
-    public static function all(string $pattern, callable|object $fn, $middleware = null): void
+    public static function all(string $pattern, callable|object|string $fn, $middleware = null): void
     {
         self::match('GET|POST|PUT|DELETE|OPTIONS|PATCH|HEAD', $pattern, $fn, $middleware);
     }
@@ -119,7 +119,7 @@ class Router
      * Shorthand for a route accessed using GET.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function get(string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -130,7 +130,7 @@ class Router
      * Shorthand for a route accessed using POST.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function post(string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -141,7 +141,7 @@ class Router
      * Shorthand for a route accessed using PATCH.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function patch(string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -152,7 +152,7 @@ class Router
      * Shorthand for a route accessed using DELETE.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function delete(string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -163,7 +163,7 @@ class Router
      * Shorthand for a route accessed using PUT.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function put(string $pattern, callable|object|string $fn, $middleware = null): void
     {
@@ -174,7 +174,7 @@ class Router
      * Shorthand for a route accessed using OPTIONS.
      *
      * @param string $pattern A route pattern such as /about/system
-     * @param callable|object $fn The handling function to be executed
+     * @param callable|object|string $fn The handling function to be executed
      */
     public static function options(string $pattern, callable|object|string $fn, $middleware = null): void
     {
