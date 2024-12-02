@@ -1,7 +1,7 @@
 <?php
 
 // In case one is using PHP 5.4's built-in server
-use Soanix\Router\Router;
+use src\Router\Router;
 
 $filename = __DIR__ . preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']);
 if (php_sapi_name() === 'cli-server' && is_file($filename)) {

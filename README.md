@@ -55,7 +55,7 @@ Create an instance of `\Bramus\Router\Router`, define some routes onto it, and r
 // Require composer autoloader
 require __DIR__ . '/vendor/autoload.php';
 
-use \Soanix\Router\Router;
+use srcsrc\Router\Router;
 
 // Define routes
 // ...

@@ -13,7 +13,7 @@ require_once __DIR__ . '/../src/Soanix/Router/Router.php';
 /**
  * A Multilingual Router
  */
-class MultilangRouter extends \Soanix\Router\Router
+class MultilangRouter extends \src\Router\Router
 {
     /**
      * The Default langauge

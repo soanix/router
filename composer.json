@@ -1,5 +1,6 @@
 {
     "name": "soanix/router",
+    "version": "1.7",
     "description": "A lightweight and simple object oriented PHP Router",
     "keywords": ["router", "routing"],
     "homepage": "https://github.com/soanix/router",
@@ -9,7 +10,7 @@
         {
             "name": "Bram(us) Van Damme",
             "email": "bramus@bram.us",
-            "homepage": "http://www.bram.us"
+            "homepage": "https://www.bram.us"
         },
         {
             "name": "Pedro 'Soanix' Oliver",
@@ -17,7 +18,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.4",
         "ext-json": "*"
     },
     "require-dev": {
