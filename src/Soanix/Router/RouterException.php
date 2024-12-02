@@ -1,6 +1,6 @@
 <?php
 
-namespace Soanix\Router;
+namespace Soanix\Soanix\Router;
 
 use Exception;
 
