@@ -6,7 +6,7 @@
  * @license     MIT public license
  */
 
-namespace Soanix\Soanix\Router;
+namespace Soanix\Router;
 
 use ReflectionException;
 use ReflectionMethod;
