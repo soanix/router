@@ -431,7 +431,7 @@ class Router
                     if (!is_array($route['middleware']))
                         $middlewares[] = $route['middleware'];
                     else
-                        $middlewares = $routes['middleware'];
+                        $middlewares = $route['middleware'];
 
                 foreach ($middlewares as $middleware)
                     self::invoke($middleware, $params);
