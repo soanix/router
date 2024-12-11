@@ -1,6 +1,5 @@
 {
     "name": "soanix/router",
-    "version": "1.7",
     "description": "A lightweight and simple object oriented PHP Router",
     "keywords": ["router", "routing"],
     "homepage": "https://github.com/soanix/router",

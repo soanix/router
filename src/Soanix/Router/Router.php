@@ -469,6 +469,12 @@ class Router
             // Explode segments of given route
             list($controller, $method) = explode('@', $fn);
 
+            $methodParts = explode(':', $method);
+
+            $method = $methodParts[0];
+
+            $extraParams = array_shift($methodParts);
+
             // Adjust controller class if namespace has been set
             if (self::getNamespace() !== '') {
                 $controller = self::getNamespace() . '\\' . $controller;
@@ -479,7 +485,7 @@ class Router
                 // Make sure it's callable
                 if ($reflectedMethod->isPublic() && (!$reflectedMethod->isAbstract())) {
                     if ($reflectedMethod->isStatic()) {
-                        forward_static_call_array(array($controller, $method), $params);
+                        forward_static_call_array(array($controller, $method), array_merge($params, $extraParams ?? []));
                     } else {
                         // Make sure we have an instance, because a non-static method must not be called statically
                         if (is_string($controller)) {
