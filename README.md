@@ -1,10 +1,12 @@
 # soanix/router
 
-[![Build Status](https://github.com/bramus/router/workflows/CI/badge.svg)](https://github.com/bramus/router/actions) [![Source](http://img.shields.io/badge/source-bramus/router-blue.svg?style=flat-square)](https://github.com/bramus/router) [![Version](https://img.shields.io/packagist/v/bramus/router.svg?style=flat-square)](https://packagist.org/packages/bramus/router) [![Downloads](https://img.shields.io/packagist/dt/bramus/router.svg?style=flat-square)](https://packagist.org/packages/bramus/router/stats) [![License](https://img.shields.io/packagist/l/bramus/router.svg?style=flat-square)](https://github.com/bramus/router/blob/master/LICENSE)
+[![Source](http://img.shields.io/badge/source-bramus/router-blue.svg?style=flat-square)](https://github.com/bramus/router) [![Source](http://img.shields.io/badge/source-soanix/router-blue.svg?style=flat-square)](https://github.com/soanix/router) [![Version](https://img.shields.io/packagist/v/bramus/router.svg?style=flat-square)](https://packagist.org/packages/soanix/router) [![Downloads](https://img.shields.io/packagist/dt/soanix/router.svg?style=flat-square)](https://packagist.org/packages/soanix/router/stats) [![License](https://img.shields.io/packagist/l/soanix/router.svg?style=flat-square)](https://github.com/bramus/soanix/blob/master/LICENSE)
 
 A lightweight and simple object oriented PHP Router.
-Built by Bram(us) Van Damme _([https://www.bram.us](https://www.bram.us))_ and [Contributors](https://github.com/bramus/router/graphs/contributors)
 
+
+Powered by Bram(us) Van Damme _([https://www.bram.us](https://www.bram.us))_ and [Contributors](https://github.com/bramus/router/graphs/contributors)  
+Forked by Soanix Cavesman and [Contributors](https://github.com/soanix/router/graphs/contributors)
 
 ## Features
 
@@ -26,7 +28,7 @@ Built by Bram(us) Van Damme _([https://www.bram.us](https://www.bram.us))_ and [
 
 ## Prerequisites/Requirements
 
-- PHP 5.3 or greater
+- PHP 8.0 or greater
 - [URL Rewriting](https://gist.github.com/bramus/5332525)
 
 
@@ -36,7 +38,7 @@ Built by Bram(us) Van Damme _([https://www.bram.us](https://www.bram.us))_ and [
 Installation is possible using Composer
 
 ```
-composer require soanix/router ~1.6
+composer require soanix/router
 ```
 
 
@@ -55,7 +57,7 @@ Create an instance of `\Bramus\Router\Router`, define some routes onto it, and r
 // Require composer autoloader
 require __DIR__ . '/vendor/autoload.php';
 
-use srcsrc\Router\Router;
+use \Soanix\Router\Router;
 
 // Define routes
 // ...

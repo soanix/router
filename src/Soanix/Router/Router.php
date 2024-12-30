@@ -19,12 +19,12 @@ class Router
     /**
      * @var array The route patterns and their handling functions
      */
-    private static array $afterRoutes = [];
+    protected static array $afterRoutes = [];
 
     /**
      * @var array The before middleware route patterns and their handling functions
      */
-    private static array $beforeRoutes = [];
+    protected static array $beforeRoutes = [];
 
     /**
      * @var array [object|callable] The function to be executed when no route has been matched
