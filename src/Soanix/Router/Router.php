@@ -34,22 +34,22 @@ class Router
     /**
      * @var string Current base route, used for (sub)route mounting
      */
-    private static string $baseRoute = '';
+    protected static string $baseRoute = '';
 
     /**
      * @var string The Request Method that needs to be handled
      */
-    private static string $requestedMethod = '';
+    protected static string $requestedMethod = '';
 
     /**
      * @var ?string The Server Base Path for Router Execution
      */
-    private static ?string $serverBasePath = null;
+    protected static ?string $serverBasePath = null;
 
     /**
      * @var string Default Controllers Namespace
      */
-    private static string $namespace = '';
+    protected static string $namespace = '';
 
     public static function clear(): void
     {
